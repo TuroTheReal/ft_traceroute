@@ -18,9 +18,9 @@ BONUS_FOLD = bonus/
 HEADER_FOLD = header/
 HEADER_SRC = ft_traceroute
 
-C_SRC = main parse print socket resolve signal ping
+C_SRC = main parse print socket resolve signal traceroute
 
-# C_SRC_BONUS = 
+# C_SRC_BONUS =
 
 # Headers
 HEADER_FLS = $(addsuffix .h, $(HEADER_SRC))
