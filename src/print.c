@@ -9,7 +9,6 @@ void	print_welcome(t_trace trace){
 			PAYLOAD_SIZE + IP_HEADER_SIZE + UDP_HEADER_SIZE);
 }
 
-
 void	print_version(){
 	printf("Modern traceroute for Linux, version 1.0.0\nCopyright (c) 2025, Arthur Bernard.\n");
 }
@@ -23,4 +22,11 @@ void	print_help() {
 	printf("  -i device,	--interface=device	Specify a network interface to operate with\n");
 	printf("  -V,		--version		Print program version\n");
 	printf("  -?, -h, --help			Give this help list\n");
+}
+
+void	print_hop(t_trace *trace, t_stats *stats){
+	(void)trace;
+	(void)stats;
+
+	printf("okj");
 }

@@ -9,6 +9,7 @@ void validate_options(int argc, char **argv) {
 				strcmp(argv[i], "--queries") != 0 &&
 				strcmp(argv[i], "--help") != 0 &&
 				strcmp(argv[i], "--version") != 0 &&
+				strcmp(argv[i], "--wait") != 0 &&
 				strcmp(argv[i], "--interface") != 0) {
 				fprintf(stderr, "unrecognized option '%s'\n", argv[i]);
 				print_help();
@@ -40,6 +41,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 		{"max-hops", required_argument, NULL, 'm'},
 		{"queries", required_argument, NULL, 'q'},
 		{"interface", required_argument, NULL, 'i'},
+		{"wait", required_argument, NULL, 'w'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
@@ -48,7 +50,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 	validate_options(argc, argv);
 	opterr = 0;
 
-	while ((opt = getopt_long(argc, argv, "V?p:m:q:i:", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "V?p:m:q:i:w:", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'V':
 				print_version();
@@ -81,6 +83,44 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 				break;
 			}
 
+			case 'w': {
+				double waittime = 5.0, here = 0.0, near = 0.0;
+				char *endptr;
+
+				// Parser la première valeur (waittime)
+				waittime = strtod(optarg, &endptr);
+
+				// Si c'est suivi d'une virgule, parser here
+				if (*endptr == ',') {
+					endptr++;
+					here = strtod(endptr, &endptr);
+
+					// Si c'est suivi d'une autre virgule, parser near
+					if (*endptr == ',') {
+						endptr++;
+						near = strtod(endptr, &endptr);
+					}
+				}
+
+				// Vérifier qu'il n'y a pas de caractères invalides à la fin
+				if (*endptr != '\0') {
+					fprintf(stderr, "Cannot handle `-%c' option with arg `%s' (argc %d)\n",
+							opt, optarg, optind - 1);
+					exit(1);
+				}
+
+				// Valider les valeurs
+				if (waittime < 0 || here < 0 || near < 0) {
+					fprintf(stderr, "bad wait specifications `%s'\n", optarg);
+					exit(1);
+				}
+
+				trace->waittime = (int)waittime;
+				trace->here = here;
+				trace->near = near;
+				break;
+			}
+
 			case 'q': {
 				char *endptr;
 				nprobes_value = strtol(optarg, &endptr, 10);
@@ -103,7 +143,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 					exit(0);
 				}
 				else if (optopt) {
-					if (optopt == 'm' || optopt == 'q' || optopt == 'i' || optopt == 'p') {
+					if (optopt == 'm' || optopt == 'q' || optopt == 'i' || optopt == 'p' || optopt == 'w') {
 						fprintf(stderr, "Option `-%c' (argc %d) requires an argument: `-%c ", optopt, optind - 1, optopt);
 						if (optopt == 'm')
 							fprintf(stderr, "max_ttl'\n");
@@ -113,6 +153,8 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 							fprintf(stderr, "device'\n");
 						else if (optopt == 'p')
 							fprintf(stderr, "port'\n");
+						else if (optopt == 'w')
+							fprintf(stderr, "MAX,HERE,NEAR'\n");
 						exit(1);
 					}
 					else {

@@ -10,6 +10,7 @@
 #include <netdb.h>  // Pour getaddrinfo, struct addrinfo, gai_strerror
 #include <netinet/ip.h> // IPPROTO_IP
 #include <netinet/ip_icmp.h> // ICMP_ECHO, ICMP_ECHOREPLY
+#include <netinet/udp.h>  // Pour struct udphdr
 #include <signal.h>  // Pour sigaction, SIGINT
 #include <stdint.h> // uint8_t, uint16_t, uint32_t
 #include <stdio.h> // printf(), fprintf(), perror()
@@ -29,14 +30,15 @@ typedef struct s_trace {
 	char	*hostname;
 	int		send_fd;
 	int		recv_fd;
-	int		base_port;
 
 	// Bonus
-	int		no_dns;		// -n NO DNS (0 par défaut) a faire
-	int		max_ttl;	// -m MAX_TTL (30 par défaut) a faire
-	int		nprobes;	// -q PROBE PER HOP(3 par défaut) a faire
 	char	*interface;// -i INTERFACE (0 par défaut) a faire
-
+	int		max_ttl;	// -m MAX_TTL (30 par défaut) a faire
+	int		base_port;	// -p PORT (33434 par défaut) a faire
+	int		nprobes;	// -q PROBE PER HOP(3 par défaut) a faire
+	int		waittime;	// -w MAX TIME to wait(5 par défaut) a faire
+	double	here;       // -w deuxième param (secondes)a faire
+	double	near;       // -w troisième param (secondes)a faire
 
 	struct	sockaddr_in dest_addr;  // Adresse destination
 	struct	timeval start_time;
@@ -44,6 +46,10 @@ typedef struct s_trace {
 } t_trace;
 
 typedef struct s_stats {
+	struct		sockaddr_in  addr;	   // Adresse du routeur
+	double		triptime;
+	int			timeout;
+	uint8_t		icmp_type;
 } t_stats;
 
 typedef struct s_global {
@@ -53,10 +59,19 @@ typedef struct s_global {
 } t_global;
 
 void	parse_args(int argc, char** argv, t_trace *trace);
+
 void	print_version();
 void	print_help();
 void	print_welcome(t_trace trace);
+void	print_hop(t_trace *trace, t_stats *stats);
+
 void	create_socket(t_trace *trace);
+void	set_ttl(t_trace *trace, int ttl);
+
 void	resolve_hostname(t_trace *trace);
+
+void	do_trace(t_trace *trace, t_stats *stats);
+
+void	cleanup (t_trace *trace);
 
 #endif

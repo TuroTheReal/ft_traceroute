@@ -1,5 +1,14 @@
 #include "ft_traceroute.h"
 
+void set_ttl(t_trace *trace, int ttl){
+	if (setsockopt(trace->send_fd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) < 0) {
+		perror("setsockopt (timeout)");
+		close(trace->send_fd);
+		close(trace->recv_fd);
+		exit(EXIT_FAILURE);
+	}
+}
+
 void create_socket(t_trace *trace)
 {
 	int send_sock;
@@ -29,7 +38,7 @@ void create_socket(t_trace *trace)
 	}
 
 	struct timeval tv;
-	tv.tv_sec = 5;
+	tv.tv_sec = trace->waittime;
 	tv.tv_usec = 0;
 
 	if (setsockopt(recv_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {

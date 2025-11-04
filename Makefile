@@ -18,8 +18,8 @@ BONUS_FOLD = bonus/
 HEADER_FOLD = header/
 HEADER_SRC = ft_traceroute
 
-C_SRC = main parse print socket resolve
-#    signal traceroute
+C_SRC = main parse print socket resolve trace
+#    signal 
 
 # C_SRC_BONUS =
 
