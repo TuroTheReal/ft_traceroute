@@ -16,15 +16,16 @@ int main(int ac, char **av) {
 	t_stats stats = {
 	};
 
+	(void)stats;
 	parse_args(ac, av, &trace);
 
-	// printf("======= DEBUG =======\n");
-	// printf("  Hostname: %s\n", trace.hostname);
-	// printf("  no-dns: %d\n", trace.no-dns);
-	// printf("  max_ttl: %d\n", trace.max_ttl);
-	// printf("  probes: %.2f\n", trace.probes);
-	// printf("  port: %d\n", trace.port);
-	// printf("  interface: %.2f\n", trace.interface);
+	printf("======= DEBUG =======\n");
+	printf("  Hostname: %s\n", trace.hostname);
+	printf("  no-dns: %d\n", trace.no_dns);
+	printf("  max_ttl: %d\n", trace.max_ttl);
+	printf("  nprobes: %d\n", trace.nprobes);
+	printf("  base_port: %d\n", trace.base_port);
+	printf("  interface: %s\n", trace.interface);
 
 	// trace.sockfd = create_socket(&trace);
 	// resolve_hostname(&trace);
