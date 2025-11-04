@@ -36,9 +36,9 @@ typedef struct s_trace {
 	int		max_ttl;	// -m MAX_TTL (30 par défaut) a faire
 	int		base_port;	// -p PORT (33434 par défaut) a faire
 	int		nprobes;	// -q PROBE PER HOP(3 par défaut) a faire
-	int		waittime;	// -w MAX TIME to wait(5 par défaut) a faire
-	double	here;       // -w deuxième param (secondes)a faire
-	double	near;       // -w troisième param (secondes)a faire
+	int		waittime;	// -w MAX premier param(5 par défaut) a faire
+	double	here;       //  HERE deuxième param (0.0 secondes)a faire
+	double	near;       //  NEAR troisième param (0.0secondes)a faire
 
 	struct	sockaddr_in dest_addr;  // Adresse destination
 	struct	timeval start_time;
