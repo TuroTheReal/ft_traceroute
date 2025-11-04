@@ -46,7 +46,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 	};
 
 	validate_options(argc, argv);
-	opterr = 0;  // Désactiver msg erreur auto getopt
+	opterr = 0;
 
 	while ((opt = getopt_long(argc, argv, "V?nm:q:i:", long_options, NULL)) != -1) {
 		switch (opt) {
@@ -90,10 +90,10 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 				if (optopt == '?') {
 					print_help();
 					exit(0);
-				} else if (optopt) {
+				}
+				else if (optopt) {
 					if (optopt == 'm' || optopt == 'q' || optopt == 'i') {
-						fprintf(stderr, "Option `-%c' (argc %d) requires an argument: `-%c ",
-								optopt, optind - 1, optopt);
+						fprintf(stderr, "Option `-%c' (argc %d) requires an argument: `-%c ", optopt, optind - 1, optopt);
 						if (optopt == 'm')
 							fprintf(stderr, "max_ttl'\n");
 						else if (optopt == 'q')
@@ -101,11 +101,13 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 						else if (optopt == 'i')
 							fprintf(stderr, "device'\n");
 						exit(1);
-					} else {
+					}
+					else {
 						fprintf(stderr, "Bad option `-%c' (argc %d)\n", optopt, optind);
 						exit(1);
 					}
-				} else {
+				}
+				else {
 					fprintf(stderr, "unrecognized option '%s'\n", argv[optind - 1]);
 					fprintf(stderr, "Try 'traceroute --help' for more information.\n");
 					exit(1);
@@ -119,7 +121,8 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 			default:
 				if (optopt) {
 					fprintf(stderr, "invalid option -- '%c'\n", optopt);
-				} else {
+				}
+				else {
 					fprintf(stderr, "unrecognized option '%s'\n", argv[optind - 1]);
 				}
 				fprintf(stderr, "Try 'traceroute --help' for more information.\n");
@@ -145,7 +148,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 			fprintf(stderr, "first hop out of range\n");
 			exit(1);
 		}
-		if (max_ttl_value > 255) {
+	if (max_ttl_value > 255) {
 			fprintf(stderr, "max hops cannot be more than 255\n");
 			exit(1);
 		}
@@ -160,7 +163,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 		trace->nprobes = nprobes_value;
 	}
 
-		if (optind + 1 < argc) {
+	if (optind + 1 < argc) {
 		fprintf(stderr, "extra operand");
 		for (int i = optind + 1; i < argc; i++) {
 			fprintf(stderr, " '%s'", argv[i]);
