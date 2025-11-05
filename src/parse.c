@@ -50,7 +50,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 	validate_options(argc, argv);
 	opterr = 0;
 
-	while ((opt = getopt_long(argc, argv, "V?p:m:q:i:w:", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "V?p:m:q:i:w:h", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'V':
 				print_version();

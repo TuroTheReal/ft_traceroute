@@ -48,30 +48,37 @@ typedef struct s_trace {
 typedef struct s_stats {
 	struct		sockaddr_in  addr;	   // Adresse du routeur
 	double		triptime;
-	int			timeout;
 	uint8_t		icmp_type;
+	int			icmp_code;
+	int			should_stop;
 } t_stats;
 
 typedef struct s_global {
-	t_trace	*trace;
-	t_stats	*stats;
-	int		interrupted;
+	t_trace					*trace;
+	t_stats					*stats;
+	volatile sig_atomic_t	interrupted;
 } t_global;
 
-void	parse_args(int argc, char** argv, t_trace *trace);
+extern t_global g_data;
 
-void	print_version();
-void	print_help();
-void	print_welcome(t_trace trace);
-void	print_hop(t_stats *stats);
+void		parse_args(int argc, char** argv, t_trace *trace);
 
-void	create_socket(t_trace *trace);
-void	set_ttl(t_trace *trace, int ttl);
+void		print_version();
+void		print_help();
+void		print_welcome(t_trace trace);
+void		print_hop(t_stats *stats);
 
-void	resolve_hostname(t_trace *trace);
+void		create_socket(t_trace *trace);
+void		set_ttl(t_trace *trace, int ttl);
 
-void	do_trace(t_trace *trace, t_stats *stats);
+void		resolve_hostname(t_trace *trace);
 
-void	cleanup (t_trace *trace);
+void		setup_signal(t_trace *trace, t_stats *stats);
+
+void		do_trace(t_trace *trace, t_stats *stats);
+
+void		cleanup (t_trace *trace);
+
+const char	*get_icmp_code_string(int icmp_type, int icmp_code);
 
 #endif

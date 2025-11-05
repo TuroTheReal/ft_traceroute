@@ -23,22 +23,22 @@ int main(int ac, char **av) {
 	t_stats stats = {
 		.addr = {0},
 		.triptime = 0,
-		.timeout = 0,
-		.icmp_type = 0
+		.icmp_type = 0,
+		.icmp_code = 0,
+		.should_stop = 0
 };
 
-	(void)stats;
 	parse_args(ac, av, &trace);
 
-	printf("======= DEBUG =======\n");
-	printf("  Hostname: %s\n", trace.hostname);
-	printf("  max_ttl: %d\n", trace.max_ttl);
-	printf("  nprobes: %d\n", trace.nprobes);
-	printf("  base_port: %d\n", trace.base_port);
-	printf("  interface: %s\n", trace.interface);
-	printf("  waittime: %f\n", trace.waittime);
-	printf("  near: %f\n", trace.near);
-	printf("  here: %f\n", trace.here);
+	// printf("======= DEBUG =======\n");
+	// printf("  Hostname: %s\n", trace.hostname);
+	// printf("  max_ttl: %d\n", trace.max_ttl);
+	// printf("  nprobes: %d\n", trace.nprobes);
+	// printf("  base_port: %d\n", trace.base_port);
+	// printf("  interface: %s\n", trace.interface);
+	// printf("  waittime: %f\n", trace.waittime);
+	// printf("  near: %f\n", trace.near);
+	// printf("  here: %f\n", trace.here);
 
 	resolve_hostname(&trace);
 
@@ -46,7 +46,7 @@ int main(int ac, char **av) {
 
 	create_socket(&trace);
 
-	// setup_signal(&trace, &stats);
+	setup_signal(&trace, &stats);
 
 	do_trace(&trace, &stats);
 
