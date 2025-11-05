@@ -154,7 +154,7 @@ void do_trace(t_trace *trace, t_stats *stats) {
 					if (probe > 0) {
 						printf("  ");
 					}
-					print_hop(stats);
+					print_hop(trace, stats);
 				}
 
 				// Afficher le temps de réponse

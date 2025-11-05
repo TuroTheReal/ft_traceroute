@@ -73,19 +73,24 @@ const char *get_icmp_code(int icmp_type, int icmp_code) {
 	return "";
 }
 
-void print_hop(t_stats *stats) {
+void print_hop(t_trace *trace, t_stats *stats) {
 	char hostname[NI_MAXHOST];
 	char ip_str[INET_ADDRSTRLEN];
 
 	inet_ntop(AF_INET, &stats->addr.sin_addr, ip_str, sizeof(ip_str));
-	int ret = getnameinfo((struct sockaddr *)&stats->addr, sizeof(stats->addr),
-							hostname, sizeof(hostname),
-							NULL, 0,  // On ne veut pas le port
-							0);       // Flags : 0 = comportement par défaut
 
-	if (ret == 0)
+	if (!trace->no_dns){
+		int ret = getnameinfo((struct sockaddr *)&stats->addr, sizeof(stats->addr),
+					hostname, sizeof(hostname),
+					NULL, 0,  // On ne veut pas le port
+					0);       // Flags : 0 = comportement par défaut
+
 		// Format : hostname (IP) [code_icmp]
-		printf("%s (%s)%s", hostname, ip_str, get_icmp_code(stats->icmp_type, stats->icmp_code));
+		if (ret == 0)
+			printf("%s (%s)%s", hostname, ip_str, get_icmp_code(stats->icmp_type, stats->icmp_code));
+		else
+			printf("%s%s", ip_str, get_icmp_code(stats->icmp_type, stats->icmp_code));
+	}
 	else
 		// Format : IP [code_icmp]
 		printf("%s%s", ip_str, get_icmp_code(stats->icmp_type, stats->icmp_code));

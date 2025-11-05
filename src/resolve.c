@@ -13,7 +13,7 @@ void resolve_hostname(t_trace *trace){
 	status = getaddrinfo(trace->hostname, NULL, &hints, &result);
 	if (status != 0) {
 		fprintf(stderr, "trace: %s: %s\n", trace->hostname, gai_strerror(status));
-		exit(EXIT_FAILURE);
+		exit(2);
 	}
 
 	if (!result){

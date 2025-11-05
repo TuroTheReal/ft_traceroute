@@ -10,6 +10,7 @@ void validate_options(int argc, char **argv) {
 				strcmp(argv[i], "--help") != 0 &&
 				strcmp(argv[i], "--version") != 0 &&
 				strcmp(argv[i], "--wait") != 0 &&
+				strcmp(argv[i], "--no-dns") != 0 &&
 				strcmp(argv[i], "--interface") != 0) {
 				fprintf(stderr, "unrecognized option '%s'\n", argv[i]);
 				print_help();
@@ -19,7 +20,10 @@ void validate_options(int argc, char **argv) {
 		else if (argv[i][0] == '-' && argv[i][1] != '\0') {
 			// Vérifier que c'est une option courte valide (1 seul caractère après -)
 			if (argv[i][2] != '\0' && argv[i][1] != '-' &&
-				((argv[i][1] == 'h') || (argv[i][1] == 'V'))) {
+				((argv[i][1] == 'h') || (argv[i][1] == 'V')
+				|| (argv[i][1] == 'p') || (argv[i][1] == 'm')
+				|| (argv[i][1] == 'n') || (argv[i][1] == 'i')
+				|| (argv[i][1] == 'q') || (argv[i][1] == 'w'))) {
 				// C'est une chaîne comme -help, -ttl, etc.
 				fprintf(stderr, "unrecognized option '%s'\n", argv[i]);
 				print_help();
@@ -42,6 +46,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 		{"queries", required_argument, NULL, 'q'},
 		{"interface", required_argument, NULL, 'i'},
 		{"wait", required_argument, NULL, 'w'},
+		{"no-dns", no_argument, NULL, 'n'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{0, 0, 0, 0}
@@ -50,8 +55,9 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 	validate_options(argc, argv);
 	opterr = 0;
 
-	while ((opt = getopt_long(argc, argv, "V?p:m:q:i:w:h", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "V?p:m:q:i:w:hn", long_options, NULL)) != -1) {
 		switch (opt) {
+			case 'n': trace->no_dns = 1; break;
 			case 'V':
 				print_version();
 				exit(0);
@@ -62,7 +68,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 				if (*endptr != '\0') {
 					fprintf(stderr, "Cannot handle `-%c' option with arg `%s' (argc %d)\n",
 							opt, optarg, optind - 1);
-					exit(1);
+					exit(2);
 				}
 				if (res < 0 || res > 65535)
 					fprintf(stderr, "Cannot handle port %d, set to default\n", res);
@@ -77,7 +83,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 				if (*endptr != '\0') {
 					fprintf(stderr, "Cannot handle `-%c' option with arg `%s' (argc %d)\n",
 							opt, optarg, optind - 1);
-					exit(1);
+					exit(2);
 				}
 				max_ttl_provided = 1;
 				break;
@@ -106,7 +112,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 				if (*endptr != '\0') {
 					fprintf(stderr, "Cannot handle `-%c' option with arg `%s' (argc %d)\n",
 							opt, optarg, optind - 1);
-					exit(1);
+					exit(2);
 				}
 
 				// Valider les valeurs
@@ -127,7 +133,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 				if (*endptr != '\0') {
 					fprintf(stderr, "Cannot handle `-%c' option with arg `%s' (argc %d)\n",
 							opt, optarg, optind - 1);
-					exit(1);
+					exit(2);
 				}
 				nprobes_provided = 1;
 				break;
@@ -201,15 +207,15 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 	if (max_ttl_provided) {
 		if (max_ttl_value < 0) {
 			fprintf(stderr, "min hops cannot be less than 0\n");
-			exit(1);
+			exit(2);
 		}
 		if (max_ttl_value == 0) {
 			fprintf(stderr, "first hop out of range\n");
-			exit(1);
+			exit(2);
 		}
 		if (max_ttl_value > 255) {
 			fprintf(stderr, "max hops cannot be more than 255\n");
-			exit(1);
+			exit(2);
 		}
 		trace->max_ttl = max_ttl_value;
 	}
@@ -217,11 +223,11 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 	if (nprobes_provided) {
 		if (nprobes_value <= 0) {
 			fprintf(stderr, "no less than 1 probes per hop\n");
-			exit(1);
+			exit(2);
 		}
 		if (nprobes_value > 10) {
 			fprintf(stderr, "no more than 10 probes per hop\n");
-			exit(1);
+			exit(2);
 		}
 		trace->nprobes = nprobes_value;
 	}

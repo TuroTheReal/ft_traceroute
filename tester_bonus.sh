@@ -22,6 +22,7 @@ test_cases=(
 	"-p notaport 192.0.2.123"
 	"-i eth0 -q 2 -m 20 -p 33434 google.com"
 	"-i wlan0 -q 5 -m 64 -p 33434 8.8.8.8"
+	"-n google.com"
 )
 
 RED='\033[0;31m'

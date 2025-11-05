@@ -18,6 +18,7 @@ int main(int ac, char **av) {
 		.here = 0.0,
 		.base_port = 33434,
 		.interface = NULL,
+		.no_dns = 0,
 	};
 
 	t_stats stats = {
@@ -39,6 +40,7 @@ int main(int ac, char **av) {
 	// printf("  waittime: %f\n", trace.waittime);
 	// printf("  near: %f\n", trace.near);
 	// printf("  here: %f\n", trace.here);
+	// printf("  no-dns: %d\n", trace.no_dns);
 
 	resolve_hostname(&trace);
 
