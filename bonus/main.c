@@ -13,12 +13,12 @@ int main(int ac, char **av) {
 		.recv_fd = 0,
 		.max_ttl = 30,
 		.nprobes = 3,
-		// .waittime = 5.0,
-		// .near = 0.0,
-		// .here = 0.0,
+		.waittime = 5.0,
+		.near = 0.0,
+		.here = 0.0,
 		.base_port = 33434,
-		// .interface = NULL,
-		// .no_dns = 0,
+		.interface = NULL,
+		.no_dns = 0,
 	};
 
 	t_stats stats = {

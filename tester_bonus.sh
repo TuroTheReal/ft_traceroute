@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FT_TRACEROUTE="./ft_traceroute"
+FT_TRACEROUTE="./ft_traceroute_bonus"
 SYS_PING=$(command -v traceroute)
 TIMEOUT_DURATION=1
 

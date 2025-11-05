@@ -20,7 +20,7 @@ HEADER_SRC = ft_traceroute
 
 C_SRC = main parse print socket resolve trace signal
 
-# C_SRC_BONUS =
+C_SRC_BONUS = main parse print socket resolve trace signal
 
 # Headers
 HEADER_FLS = $(addsuffix .h, $(HEADER_SRC))
