@@ -24,9 +24,21 @@ void	print_help() {
 	printf("  -?, -h, --help			Give this help list\n");
 }
 
-void	print_hop(t_trace *trace, t_stats *stats){
-	(void)trace;
-	(void)stats;
+void	print_hop(t_stats *stats) {
+	char ip_str[INET_ADDRSTRLEN];
+	char hostname[NI_MAXHOST];
 
-	printf("okj");
+	// Convertir l'IP en string
+	inet_ntop(AF_INET, &stats->addr.sin_addr, ip_str, INET_ADDRSTRLEN);
+
+	// Essayer de résoudre le hostname
+	int ret = getnameinfo((struct sockaddr *)&stats->addr, sizeof(stats->addr),
+							hostname, sizeof(hostname), NULL, 0, 0);
+
+	// On a un hostname différent de l'IP
+	if (ret == 0 && strcmp(hostname, ip_str) != 0) {
+		printf("%s (%s)", hostname, ip_str);
+	}
+	else
+		printf("%s", ip_str);
 }

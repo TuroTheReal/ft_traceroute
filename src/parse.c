@@ -115,7 +115,7 @@ void parse_args(int argc, char** argv, t_trace *trace) {
 					exit(1);
 				}
 
-				trace->waittime = (int)waittime;
+				trace->waittime = waittime;
 				trace->here = here;
 				trace->near = near;
 				break;

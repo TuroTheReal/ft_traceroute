@@ -13,7 +13,7 @@ int main(int ac, char **av) {
 		.recv_fd = 0,
 		.max_ttl = 30,
 		.nprobes = 3,
-		.waittime = 5,
+		.waittime = 5.0,
 		.near = 0.0,
 		.here = 0.0,
 		.base_port = 33434,
@@ -36,7 +36,7 @@ int main(int ac, char **av) {
 	printf("  nprobes: %d\n", trace.nprobes);
 	printf("  base_port: %d\n", trace.base_port);
 	printf("  interface: %s\n", trace.interface);
-	printf("  waittime: %d\n", trace.waittime);
+	printf("  waittime: %f\n", trace.waittime);
 	printf("  near: %f\n", trace.near);
 	printf("  here: %f\n", trace.here);
 

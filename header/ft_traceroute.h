@@ -36,7 +36,7 @@ typedef struct s_trace {
 	int		max_ttl;	// -m MAX_TTL (30 par défaut) a faire
 	int		base_port;	// -p PORT (33434 par défaut) a faire
 	int		nprobes;	// -q PROBE PER HOP(3 par défaut) a faire
-	int		waittime;	// -w MAX premier param(5 par défaut) a faire
+	double	waittime;	// -w MAX premier param(5 par défaut) a faire
 	double	here;       //  HERE deuxième param (0.0 secondes)a faire
 	double	near;       //  NEAR troisième param (0.0secondes)a faire
 
@@ -63,7 +63,7 @@ void	parse_args(int argc, char** argv, t_trace *trace);
 void	print_version();
 void	print_help();
 void	print_welcome(t_trace trace);
-void	print_hop(t_trace *trace, t_stats *stats);
+void	print_hop(t_stats *stats);
 
 void	create_socket(t_trace *trace);
 void	set_ttl(t_trace *trace, int ttl);

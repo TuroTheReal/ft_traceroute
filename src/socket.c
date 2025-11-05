@@ -38,8 +38,8 @@ void create_socket(t_trace *trace)
 	}
 
 	struct timeval tv;
-	tv.tv_sec = trace->waittime;
-	tv.tv_usec = 0;
+	tv.tv_sec = (time_t)trace->waittime;
+	tv.tv_usec = (suseconds_t)((trace->waittime - tv.tv_sec) * 1000000);
 
 	if (setsockopt(recv_sock, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
 		perror("setsockopt (timeout)");
