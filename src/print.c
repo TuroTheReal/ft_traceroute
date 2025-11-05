@@ -24,8 +24,8 @@ void	print_help() {
 	printf("  -?, -h,		--help			Give this help list\n");
 }
 
-const char *get_icmp_code_string(int icmp_type, int icmp_code) {
-	// Type 3 : Destination Unreachable (le plus important)
+const char *get_icmp_code(int icmp_type, int icmp_code) {
+	// Type 3 : Destination Unreachable
 	if (icmp_type == ICMP_DEST_UNREACH) {
 		switch (icmp_code) {
 			case ICMP_NET_UNREACH:      // Code 0
@@ -35,8 +35,7 @@ const char *get_icmp_code_string(int icmp_type, int icmp_code) {
 			case ICMP_PROT_UNREACH:     // Code 2
 				return " !P";  // Protocol Unreachable
 			case ICMP_PORT_UNREACH:     // Code 3
-				// On n'affiche rien dans ce cas
-				return "";
+				return "";     // On n'affiche rien dans ce cas
 			case ICMP_FRAG_NEEDED:      // Code 4
 				return " !F";  // Fragmentation needed but DF set
 			case ICMP_SR_FAILED:        // Code 5
@@ -66,11 +65,9 @@ const char *get_icmp_code_string(int icmp_type, int icmp_code) {
 		}
 	}
 
-	// Type 11 : Time Exceeded
-	// hop intermédiaire
-	if (icmp_type == ICMP_TIME_EXCEEDED) {
+	// Type 11 : Time Exceeded = hop intermédiaire
+	if (icmp_type == ICMP_TIME_EXCEEDED)
 		return "";
-	}
 
 	// Autres types ICMP non gérés
 	return "";
@@ -86,13 +83,10 @@ void print_hop(t_stats *stats) {
 							NULL, 0,  // On ne veut pas le port
 							0);       // Flags : 0 = comportement par défaut
 
-	if (ret == 0) {
+	if (ret == 0)
 		// Format : hostname (IP) [code_icmp]
-		printf("%s (%s)%s", hostname, ip_str,
-		       get_icmp_code_string(stats->icmp_type, stats->icmp_code));
-	} else {
+		printf("%s (%s)%s", hostname, ip_str, get_icmp_code(stats->icmp_type, stats->icmp_code));
+	else
 		// Format : IP [code_icmp]
-		printf("%s%s", ip_str,
-		       get_icmp_code_string(stats->icmp_type, stats->icmp_code));
-	}
+		printf("%s%s", ip_str, get_icmp_code(stats->icmp_type, stats->icmp_code));
 }

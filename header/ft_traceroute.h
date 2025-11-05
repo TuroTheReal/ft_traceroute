@@ -79,6 +79,4 @@ void		do_trace(t_trace *trace, t_stats *stats);
 
 void		cleanup (t_trace *trace);
 
-const char	*get_icmp_code_string(int icmp_type, int icmp_code);
-
 #endif
