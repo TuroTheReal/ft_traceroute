@@ -49,12 +49,12 @@ int recv_trace(t_trace *trace, t_stats *stats){
 		struct ip *ip_hdr = (struct ip *)buffer;
 		int ip_header_len = ip_hdr->ip_hl * 4;
 
-		// Vérifier qu'il y a assez de données pour l'en-tête ICMP
+		// Min données pour hdr ICMP
 		size_t min_icmp_size = (size_t)(ip_header_len + ICMP_MINLEN);
 		if ((size_t)ret < min_icmp_size)
 			continue;
 
-		// Parser l'en-tête ICMP de la réponse
+		// Parser hdr ICMP de la réponse
 		struct icmp *icmp_hdr = (struct icmp *)(buffer + ip_header_len);
 		int type = icmp_hdr->icmp_type;
 		int code = icmp_hdr->icmp_code;
@@ -64,11 +64,11 @@ int recv_trace(t_trace *trace, t_stats *stats){
 			continue;
 
 		// Extraire le paquet UDP original encapsulé dans le message ICMP
-		// Les messages ICMP d'erreur contiennent l'en-tête IP + 8 premiers octets
+		// messages ICMP d'erreur contiennent hdr IP + 8 premiers octets
 		// du paquet original qui a causé l'erreur
 		struct ip *orig_ip = (struct ip *)(buffer + ip_header_len + ICMP_MINLEN);
 
-		// Vérifier qu'il y a assez de place pour lire l'en-tête UDP original
+		// Vérifier UDP original complet
 		size_t min_udp_size = (size_t)(ip_header_len + ICMP_MINLEN +
 								(orig_ip->ip_hl * 4) + sizeof(struct udphdr));
 
@@ -86,28 +86,27 @@ int recv_trace(t_trace *trace, t_stats *stats){
 		if (recv_port < trace->base_port || recv_port >= trace->base_port + trace->max_ttl * trace->nprobes)
 			continue;
 
-		// C'est bien notre paquet ! Calculer le temps de réponse
+		// OK -> Calculer le temps de réponse
 		stats->triptime = (recv_time.tv_sec - trace->start_time.tv_sec) * 1000.0 +
 							(recv_time.tv_usec - trace->start_time.tv_usec) / 1000.0;
 		stats->addr = from;
 		stats->icmp_type = type;
 		stats->icmp_code = code;  // Sauvegarder le code ICMP
 
-		// Cas 1 : On a atteint la destination (Port Unreachable)
+		// On a atteint la destination (Port Unreachable)
 		if (type == ICMP_DEST_UNREACH && code == ICMP_PORT_UNREACH &&
 		    from.sin_addr.s_addr == trace->dest_addr.sin_addr.s_addr) {
 			stats->should_stop = 1;
 		}
 
-		// Cas 2 : Erreurs fatales qui indiquent qu'on ne peut pas continuer
-		// Network/Host Unreachable, Protocol Unreachable, etc.
+		// Erreurs -> Network/Host Unreachable, Protocol Unreachable, etc.
 		if (type == ICMP_DEST_UNREACH && (
 			code == ICMP_NET_UNREACH || code == ICMP_HOST_UNREACH ||
 			code == ICMP_PROT_UNREACH || code == ICMP_NET_ANO ||
 			code == ICMP_HOST_ANO || code == ICMP_PKT_FILTERED))
 			stats->should_stop = 1;
 
-		return 1;  // Paquet reçu avec succès
+		return 1;  // Paquet reçu
 	}
 }
 
@@ -134,7 +133,7 @@ void do_trace(t_trace *trace, t_stats *stats) {
 			if (ret > 0) {
 				// On a reçu une réponse ICMP
 
-				// Afficher le hop si c'est le premier probe OU si l'IP change -> load balancing
+				// Afficher hop si premier probe OU si l'IP change -> load balancing
 				if (probe == 0 || stats->addr.sin_addr.s_addr != current_hop.sin_addr.s_addr) {
 					if (probe > 0)
 						printf("  ");
@@ -149,7 +148,7 @@ void do_trace(t_trace *trace, t_stats *stats) {
 				if (stats->addr.sin_addr.s_addr == trace->dest_addr.sin_addr.s_addr)
 					reached = 1;
 
-				// Si should_stop est activé, on doit arrêter après ce hop
+				// Si should_stop est activé, stop après ce hop
 				if (stats->should_stop)
 					reached = 1;
 
@@ -169,7 +168,7 @@ void do_trace(t_trace *trace, t_stats *stats) {
 
 		printf("\n");
 
-		// Si on a atteint la destination, arrêter le traceroute
+		// dest ok -> arrêter le traceroute
 		if (reached)
 			break;
 
