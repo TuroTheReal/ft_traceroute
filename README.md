@@ -15,7 +15,7 @@
 
 ## About
 
-This repository contains my implementation of the **ft_traceroute** project at 42 School.  
+This repository contains my implementation of the **ft_traceroute** project.  
 ft_traceroute is a recreation of the famous **traceroute** network diagnostic tool, used worldwide since 1987 to map network paths and diagnose routing issues.  
 Built entirely in **C**, this program traces the route packets take across an IP network to reach a destination host using **UDP datagrams** and **ICMP Time Exceeded messages**, revealing every router hop along the path with precise timing measurements.
 
