@@ -15,7 +15,7 @@
 
 ## About
 
-This repository contains my implementation of the **ft_traceroute** project.  
+This repository contains my implementation of the **ft_traceroute** project at 42 School.  
 ft_traceroute is a recreation of the famous **traceroute** network diagnostic tool, used worldwide since 1987 to map network paths and diagnose routing issues.  
 Built entirely in **C**, this program traces the route packets take across an IP network to reach a destination host using **UDP datagrams** and **ICMP Time Exceeded messages**, revealing every router hop along the path with precise timing measurements.
 
@@ -75,14 +75,24 @@ sudo ./ft_traceroute -m 15 google.com
 # Set number of probes per hop (default: 3)
 sudo ./ft_traceroute -q 5 8.8.8.8
 
-# Set initial TTL value (default: 1)
-sudo ./ft_traceroute -f 5 google.com
-
 # Set UDP port (default: 33434)
 sudo ./ft_traceroute -p 44000 8.8.8.8
 
+# Set interval between probes in seconds (default: 0)
+sudo ./ft_traceroute -i 1 google.com
+
+# Set wait timeout for responses in seconds (default: 5)
+sudo ./ft_traceroute -w 3 8.8.8.8
+
+# Disable DNS resolution (numeric output only)
+sudo ./ft_traceroute -n google.com
+
+# Display version
+./ft_traceroute -V
+
 # Display help
 ./ft_traceroute -h
+./ft_traceroute -?
 ```
 
 ### Example Output
@@ -177,9 +187,12 @@ The program sends UDP probe packets with incrementing TTL values, listening for 
 
 * **-m (max_hops)**: Set maximum number of hops (default: 30)
 * **-q (nqueries)**: Set number of probes per hop (default: 3)
-* **-f (first_ttl)**: Set starting TTL value (default: 1)
 * **-p (port)**: Set base destination UDP port (default: 33434)
-* **-h (help)**: Display usage information and available options
+* **-i (interval)**: Set interval between probes in seconds (default: 0)
+* **-w (wait)**: Set timeout for responses in seconds (default: 5)
+* **-n**: Disable DNS resolution, show IPs only
+* **-V**: Display version information
+* **-h/-?**: Display usage information and available options
 
 ### Network Analysis
 
@@ -192,6 +205,7 @@ The program sends UDP probe packets with incrementing TTL values, listening for 
 
 * **Reverse DNS Lookup**: Convert router IPs to hostnames when available
 * **Forward DNS Resolution**: Convert destination hostname to IP address
+* **Numeric Mode (-n)**: Skip DNS resolution for faster output
 * **Fallback to IP Display**: Show IP addresses when DNS resolution fails
 * **Non-Blocking DNS**: Avoid delays from slow DNS queries
 
@@ -207,7 +221,8 @@ The program sends UDP probe packets with incrementing TTL values, listening for 
 * **Socket Creation Errors**: Handle raw socket privilege requirements
 * **Network Unreachable**: Detect and report network connectivity issues
 * **Host Unreachable**: Identify unreachable destinations
-* **Timeout Management**: Handle probes that receive no response
+* **Timeout Management**: Handle probes that receive no response (-w option)
+* **Probe Interval Control**: Configure delay between probes to avoid network flooding (-i option)
 * **Invalid Hop Count**: Validate user-specified parameters
 
 ## Program Architecture
@@ -268,15 +283,24 @@ sudo ./ft_traceroute -m 5 8.8.8.8
 sudo ./ft_traceroute -q 5 google.com
 sudo ./ft_traceroute -q 1 8.8.8.8
 
-# Test initial TTL
-sudo ./ft_traceroute -f 3 google.com
-sudo ./ft_traceroute -f 5 -m 15 8.8.8.8
-
 # Test custom port
 sudo ./ft_traceroute -p 40000 google.com
 
+# Test probe interval
+sudo ./ft_traceroute -i 2 google.com
+sudo ./ft_traceroute -i 0.5 8.8.8.8
+
+# Test wait timeout
+sudo ./ft_traceroute -w 2 google.com
+sudo ./ft_traceroute -w 10 8.8.8.8
+
+# Test numeric output (no DNS)
+sudo ./ft_traceroute -n google.com
+sudo ./ft_traceroute -n 8.8.8.8
+
 # Combined options
-sudo ./ft_traceroute -m 20 -q 5 -f 1 8.8.8.8
+sudo ./ft_traceroute -m 20 -q 5 -i 1 -w 3 8.8.8.8
+sudo ./ft_traceroute -n -m 15 -q 3 google.com
 ```
 
 ### Network Condition Tests
@@ -301,9 +325,13 @@ sudo ./ft_traceroute europe.example.com
 traceroute google.com
 sudo ./ft_traceroute google.com
 
-# Compare timing measurements
+# Compare with numeric mode (no DNS)
 traceroute -n 8.8.8.8
-sudo ./ft_traceroute 8.8.8.8
+sudo ./ft_traceroute -n 8.8.8.8
+
+# Compare timing measurements
+traceroute -w 3 8.8.8.8
+sudo ./ft_traceroute -w 3 8.8.8.8
 
 # Compare with custom options
 traceroute -m 15 -q 5 google.com
@@ -365,11 +393,14 @@ sudo ./ft_traceroute google.com  # Press Ctrl+C during trace
 
 ### Bonus Features (Optional)
 
-* ✅ Custom initial TTL (-f flag)
+* ✅ Probe interval configuration (-i flag)
+* ✅ Configurable response timeout (-w flag)
+* ✅ Numeric mode without DNS resolution (-n flag)
 * ✅ Custom UDP port (-p flag)
-* ✅ Configurable probe count per hop (-q flag)
 * ✅ Maximum hop limit configuration (-m flag)
-* ✅ Enhanced error reporting and diagnostics
+* ✅ Configurable probe count per hop (-q flag)
+* ✅ Version display (-V flag)
+* ✅ Multiple help options (-h and -? flags)
 
 ## Contact
 
